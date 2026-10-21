@@ -2,33 +2,49 @@
 import gradio as gr
 from yt_playlist_extractor.core import extraer_links
 
-def procesar_playlist(url: str):
-    """Función que conecta la interfaz con la lógica de extracción."""
-    if not url or 'youtube.com/playlist' not in url:
+
+def procesar_playlist(url: str, modo: str):
+    if not url or 'list=' not in url:
         return "Por favor, introduce una URL válida de una lista de reproducción."
     try:
-        resultados = extraer_links(url)
-        if not resultados:
+        videos = extraer_links(url)
+        if not videos:
             return "No se encontraron videos en la lista."
-        # Devuelve una lista de listas para que Gradio lo muestre como tabla
-        return [[r['titulo'], r['url']] for r in resultados]
+
+        if modo == "Solo títulos":
+            return "\n".join(v['titulo'] for v in videos)
+        elif modo == "Solo enlaces":
+            return "\n".join(v['url'] for v in videos)
+        else:  # "Ambos"
+            # Título + TAB + URL: se copia bien y se pega ordenado en cualquier editor
+            return "\n".join(f"{v['titulo']}\t{v['url']}" for v in videos)
+
     except Exception as e:
         return f"Ocurrió un error: {e}"
 
-# Crear la interfaz de Gradio
+
 interfaz = gr.Interface(
     fn=procesar_playlist,
-    inputs=gr.Textbox(
-        label="URL de la Lista de Reproducción de YouTube",
-        placeholder="https://www.youtube.com/playlist?list=..."
-    ),
-    outputs=gr.Dataframe(
-        headers=["Título del Video", "URL"],
-        label="Resultados"
-    ),
-    title="Extractor de Enlaces de YouTube",
-    description="Pega la URL de una lista de reproducción para obtener los enlaces de sus videos."
+    inputs=[
+        gr.Textbox(
+            label="URL de la Lista de Reproducción de YouTube",
+            placeholder="https://www.youtube.com/playlist?list=..."
+        ),
+        gr.Radio(
+            choices=["Solo títulos", "Solo enlaces", "Ambos"],
+            value="Ambos",
+            label="¿Qué quieres ver?",
+        ),
+    ],
+    outputs=gr.Textbox(
+    label="Resultado (uno por línea)",
+    lines=15,
+    buttons=["copy"],        
+),
+    title="Extractor de Playlists de YouTube",
+    description="Pega una playlist, elige qué ver y copia el resultado con un solo clic.",
 )
+
 
 if __name__ == "__main__":
     interfaz.launch()
