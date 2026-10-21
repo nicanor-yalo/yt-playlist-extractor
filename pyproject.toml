@@ -7,7 +7,10 @@ authors = [
     { name = "Nicanor Yalo", email = "nicanor.yalo@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "gradio>=6.30.0",
+    "yt-dlp>=2026.8.19",
+]
 
 [project.scripts]
 yt-playlist-extractor = "yt_playlist_extractor:main"
@@ -15,3 +18,25 @@ yt-playlist-extractor = "yt_playlist_extractor:main"
 [build-system]
 requires = ["uv_build>=0.13.4,<0.14.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.17.1",
+]
+## 
+[tool.pytest.ini_options]
+# Directorio donde están las pruebas
+testpaths = ["tests"]
+# Opciones por defecto para una salida más limpia
+addopts = "-ra -q"
+# Archivos que contienen pruebas
+python_files = ["test_*.py"]
+
+[tool.ruff]
+# Longitud de línea máxima
+line-length = 88
+
+[tool.ruff.lint]
+# Reglas de linting recomendadas (similares a las de pycodestyle)
+select = ["E", "F", "W", "I"]

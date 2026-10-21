@@ -1,6 +1,7 @@
 # Python-generated files
 __pycache__/
 *.py[oc]
+*.py[cod]
 build/
 dist/
 wheels/
@@ -8,3 +9,18 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
+
+# Datos y salidas
+data/
+*.csv
+*.json
+
+# Herramientas de cachés
+.pytest_cache/
+.gradio/
+.ruff_cache/
+
+# Entorno de editor
+.vscode/
+.idea/
